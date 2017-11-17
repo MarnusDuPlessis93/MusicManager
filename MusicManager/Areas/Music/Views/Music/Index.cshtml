@@ -1,0 +1,104 @@
+﻿@using MusicManager.Models;
+@model List<MusicLibrary>
+
+
+@{
+	ViewBag.Title = "Index";
+	var genres = ViewBag.Genres;
+}
+
+<style>
+	.setHeight {
+		height: 40px
+	}
+</style>
+
+<script>
+
+	function editMode(id)
+	{
+		$(".cEditMode_" + id).hide();
+		$(".cSaveMode_" + id).show();
+	}
+
+	function saveMode(id)
+	{
+		var pSongName = $("#GenreId_" + id).val();
+		var url = '@Url.Action("UpdateMusic", "Music")';
+		var data = {
+			id: id,
+			songName: $("#SongName_" + id).val(),
+			album: $("#Album_" + id).val(),
+			artist: $("#Artist_" + id).val(),
+			genreId: $("#GenreId_" + id).val(),
+			albumDate: $("#AlbumDate_" + id).val()
+		};
+
+		jQuery.ajax({
+
+			type:"post",
+			dataType:"json",
+			url: url,
+			data: data,
+			success: function(data) {
+				window.location.reload();
+				//$(".cEditMode_" + id).show();
+				//$(".cSaveMode_" + id).hide();
+			},
+			error: function(data) {
+				alert("Error while updating. Please try again");
+			},
+		});
+
+	}
+
+</script>
+@using (Html.BeginForm("Index", "Music", FormMethod.Post))
+{
+	<table style="width:100%">
+		<tr class="setHeight">
+			<td colspan="4">
+				@Html.TextBox("SearchSong", null, new { style = "width: 100%" }) &nbsp;
+			</td>
+		</tr>
+		<tr setHeight>
+			<td colspan="4">
+				@Html.DropDownList("SearchGenre", new SelectList(genres, "Id", "Name"), "(Select genre)") &nbsp;
+				<input type="submit" class="btn-info" value="Search" />
+			</td>
+		</tr>
+		<tr>
+			@*<th style="width:20%; height">Art</th>*@
+			<th>Song</th>
+			<th>Album</th>
+			<th>Artist</th>
+			<th>Genre</th>
+			<th>Actions</th>
+			@*<th>Play</th>*@
+		</tr>
+		@foreach (var item in Model)
+		{
+			<tr class="cEditMode_@item.Id">
+				@*<td><img src="@Url.Action("ShowAlbumArt", "Music", new { id = item.Id })" /></td>*@
+				<td>@item.SongName</td>
+				<td>@item.Album</td>
+				<td>@item.Artist</td>
+				<td>@item.DateOfAlbum</td>
+				<td>@item.Genre.Name</td>
+				<td onclick="editMode(@item.Id)"><a><input type="button" value="Edit" class="btn-info" /></a></td>
+				<td><a  href="@Url.Action("Delete", "Music", new { Id = item.Id })"><input type="button" value="Delete" class="btn-info" /></a></td>
+				@*<td><input type="button" class="btn-primary" /></td>*@
+			</tr>
+			<tr class="cSaveMode_@item.Id" style="display:none">
+				<td>@Html.TextBoxFor(o => item.SongName, new {Id = "SongName_" + item.Id, style = "width: 100%"  })</td>
+				<td>@Html.TextBoxFor(o => item.Album, new { Id = "Album_" + item.Id, style = "width: 100%" })</td>
+				<td>@Html.TextBoxFor(o => item.Artist, new { Id = "Artist_" + item.Id, style = "width: 100%" })</td>
+				<td>@Html.EditorFor(o => item.DateOfAlbum, new { Id = "DateOfAlbum_" + item.Id, })</td>
+				<td>@Html.DropDownListFor(o => item.GenreId, new SelectList(genres, "Id", "Name",item.GenreId), "(Select genre)",new { Id = "GenreId_" + item.Id, })</td>
+				<td  id="idSave_@item.Id" onclick="saveMode(@item.Id)"><a><input type="submit" value="Save" class="btn-info" /></a></td>
+			</tr>
+		}
+	</table>
+}
+
+

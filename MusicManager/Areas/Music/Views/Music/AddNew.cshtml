@@ -1,0 +1,73 @@
+﻿@using MusicManager.Models
+@model MusicLibrary
+
+
+@{
+	ViewBag.Title = "AddNew";
+	var genres = ViewBag.Genres;
+}
+
+<style>
+	tr{
+		height:40px
+	}
+</style>
+<script>
+	function validate()
+	{
+		var songName = $("#SongName").val();
+		if(songName === "")
+		{
+			alert("Enter a song name");
+			return false;
+
+		}
+		else
+		{
+			return true;
+		}
+	}
+</script>
+
+@using (Html.BeginForm("AddNew", "Music", FormMethod.Post, new { enctype = "multipart/form-data", name = "frm", id = "frm", onsubmit = "javascript:return validate();"}))
+{
+<table style="width:100%" class="table-responsive">
+	<colgroup>
+		<col style="width:20%;"/>
+		<col style="width:80%"/>
+	</colgroup>
+	<tr>
+		<th>Song name</th>
+		<td>@Html.TextBoxFor(o => o.SongName, new { style = "width: 100%" })</td>
+	</tr>
+	<tr>
+		<th>Artist</th>
+		<td>@Html.TextBoxFor(o => o.Artist, new { style = "width: 100%" })</td>
+	</tr>
+	<tr>
+		<th>Album</th>
+		<td>@Html.TextBoxFor(o => o.Album, new { style = "width: 100%" })</td>
+	</tr>
+	<tr class="form-group input-group-sm">
+		<th>Date of Album</th>
+		<td>@Html.EditorFor(o => o.DateOfAlbum)</td>
+	</tr>
+	<tr>
+		<th>Album Art</th>
+		<td><input type="file" id="albumArt" name="albumArt" /></td>
+	</tr>
+	<tr>
+		<th>Genre</th>
+		<td>@Html.DropDownListFor(o => o.GenreId, new SelectList(genres, "Id", "Name"), "(Select genre)")</td>
+	</tr>
+	<tr>
+		<th>Path</th>
+		<td><input type="file" id="song" name="song"  /></td>
+	</tr>
+</table>
+	<div style="float:right;width:63%">
+		<input class="btn-lg btn-success" type="submit" value="Accept" />
+	</div>
+
+}
+
