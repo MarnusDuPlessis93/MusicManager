@@ -14,7 +14,7 @@ namespace MusicManager.Services
 			using (var context = new BaseContext())
 			{
 
-				var genreList = context.Genres.ToList();
+				var genreList = context.Genres.OrderBy(o => o.Name).ToList();
 				return genreList;
 			}
 		}
@@ -32,7 +32,7 @@ namespace MusicManager.Services
 		{
 			using (var context = new BaseContext())
 			{
-				return context.MusicLibraries.Include("Genre").ToList();
+				return context.MusicLibraries.Include("Genre").Include("Song").ToList();
 
 			}
 		}
@@ -52,7 +52,7 @@ namespace MusicManager.Services
 		{
 			using (var context = new BaseContext())
 			{
-				return context.MusicLibraries.First(o => o.Id == id);
+				return context.MusicLibraries.Include("Song").First(o => o.Id == id);
 			}
 		}
 
@@ -65,11 +65,40 @@ namespace MusicManager.Services
 			}
 		}
 
-		public void DeleteMusic(MusicLibrary musicLibrary)
+		public void RemoveMusic(int Id)
 		{
 			using (var context = new BaseContext())
 			{
+				var musicLibrary = context.MusicLibraries.First(o => o.Id == Id);
 				context.MusicLibraries.Remove(musicLibrary);
+				context.SaveChanges();
+			}
+		}
+
+		public int AddSong(Song song)
+		{
+			using (var context = new BaseContext())
+			{
+				context.Songs.Add(song);
+				context.SaveChanges();
+
+				return song.Id;
+			}
+		}
+
+		public Song GetSong(int id)
+		{
+			using (var context = new BaseContext())
+			{
+				return context.Songs.First(o => o.Id == id);
+			}
+		}
+
+		public void AddNewGenre(Genre genre)
+		{
+			using (var context = new BaseContext())
+			{
+				context.Genres.Add(genre);
 				context.SaveChanges();
 			}
 		}

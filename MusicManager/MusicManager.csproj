@@ -177,6 +177,14 @@
     <Compile Include="Migrations\201711171044597_thh1.Designer.cs">
       <DependentUpon>201711171044597_thh1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711171211262_thh2.cs" />
+    <Compile Include="Migrations\201711171211262_thh2.Designer.cs">
+      <DependentUpon>201711171211262_thh2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711171229384_thh3.cs" />
+    <Compile Include="Migrations\201711171229384_thh3.Designer.cs">
+      <DependentUpon>201711171229384_thh3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BaseContext.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -201,6 +209,8 @@
     <Content Include="Areas\Music\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Music\Views\Music\Index.cshtml" />
     <Content Include="Areas\Music\Views\Music\AddNew.cshtml" />
+    <Content Include="Areas\Music\Views\Music\Manage.cshtml" />
+    <Content Include="Areas\Music\Views\Music\About.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -264,6 +274,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711171044597_thh1.resx">
       <DependentUpon>201711171044597_thh1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711171211262_thh2.resx">
+      <DependentUpon>201711171211262_thh2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711171229384_thh3.resx">
+      <DependentUpon>201711171229384_thh3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

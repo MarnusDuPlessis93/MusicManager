@@ -23,7 +23,7 @@
 
 	function saveMode(id)
 	{
-		var pSongName = $("#GenreId_" + id).val();
+		var pSongName = $("#DateOfAlbum_" + id).val();
 		var url = '@Url.Action("UpdateMusic", "Music")';
 		var data = {
 			id: id,
@@ -31,7 +31,7 @@
 			album: $("#Album_" + id).val(),
 			artist: $("#Artist_" + id).val(),
 			genreId: $("#GenreId_" + id).val(),
-			albumDate: $("#AlbumDate_" + id).val()
+			albumDate: $("#DateOfAlbum_" + id).val()
 		};
 
 		jQuery.ajax({
@@ -40,16 +40,27 @@
 			dataType:"json",
 			url: url,
 			data: data,
-			success: function(data) {
+			success: function () {
+				//alert("Music updated");
 				window.location.reload();
-				//$(".cEditMode_" + id).show();
-				//$(".cSaveMode_" + id).hide();
 			},
-			error: function(data) {
+			error: function () {
 				alert("Error while updating. Please try again");
 			},
 		});
 
+	}
+
+	function confirmDelete()
+	{
+		if (confirm("Are you sure you want to delete this item") == true)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 </script>
@@ -58,12 +69,12 @@
 	<table style="width:100%">
 		<tr class="setHeight">
 			<td colspan="4">
-				@Html.TextBox("SearchSong", null, new { style = "width: 100%" }) &nbsp;
+				@Html.TextBox("SearchSong", null, new { placeholder="Search", style = "width: 100%" }) &nbsp;
 			</td>
 		</tr>
 		<tr setHeight>
 			<td colspan="4">
-				@Html.DropDownList("SearchGenre", new SelectList(genres, "Id", "Name"), "(Select genre)") &nbsp;
+				@Html.DropDownList("SearchGenre", new SelectList(genres, "Id", "Name"), "(Search via genre)") &nbsp;
 				<input type="submit" class="btn-info" value="Search" />
 			</td>
 		</tr>
@@ -72,6 +83,7 @@
 			<th>Song</th>
 			<th>Album</th>
 			<th>Artist</th>
+			<th>Date</th>
 			<th>Genre</th>
 			<th>Actions</th>
 			@*<th>Play</th>*@
@@ -86,14 +98,19 @@
 				<td>@item.DateOfAlbum</td>
 				<td>@item.Genre.Name</td>
 				<td onclick="editMode(@item.Id)"><a><input type="button" value="Edit" class="btn-info" /></a></td>
-				<td><a  href="@Url.Action("Delete", "Music", new { Id = item.Id })"><input type="button" value="Delete" class="btn-info" /></a></td>
+				<td><a onclick="return confirmDelete()"  href="@Url.Action("Delete", "Music", new { Id = item.Id })"><input type="button" value="Delete" class="btn-info" /></a></td>
+				@if (item.Song != null)
+				{
+					<td><a href="@Url.Action("DownloadSong", "Music", new { Id = item.Id})"><input type="button" value="Download Song" class="btn-success" /></a></td>
+				}
+
 				@*<td><input type="button" class="btn-primary" /></td>*@
 			</tr>
 			<tr class="cSaveMode_@item.Id" style="display:none">
-				<td>@Html.TextBoxFor(o => item.SongName, new {Id = "SongName_" + item.Id, style = "width: 100%"  })</td>
+				<td>@Html.TextBoxFor(o => item.SongName, new {Id = "SongName_" + item.Id, style = "width: 100%" })</td>
 				<td>@Html.TextBoxFor(o => item.Album, new { Id = "Album_" + item.Id, style = "width: 100%" })</td>
 				<td>@Html.TextBoxFor(o => item.Artist, new { Id = "Artist_" + item.Id, style = "width: 100%" })</td>
-				<td>@Html.EditorFor(o => item.DateOfAlbum, new { Id = "DateOfAlbum_" + item.Id, })</td>
+				<td>@Html.TextBoxFor(o => item.DateOfAlbum, "{0:yyyy-MM-dd}", new { Id = "DateOfAlbum_" + item.Id, @type = "date" })</td>
 				<td>@Html.DropDownListFor(o => item.GenreId, new SelectList(genres, "Id", "Name",item.GenreId), "(Select genre)",new { Id = "GenreId_" + item.Id, })</td>
 				<td  id="idSave_@item.Id" onclick="saveMode(@item.Id)"><a><input type="submit" value="Save" class="btn-info" /></a></td>
 			</tr>

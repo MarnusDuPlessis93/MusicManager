@@ -35,7 +35,7 @@ namespace MusicManager.Areas.Music.Controllers
 			var searchMusic = musicLibraryModelList;
 			if (searchText != "")
 			{
-				searchMusic = musicLibraryModelList.Where(o => o.SongName.Contains(searchText) || o.Album.Contains(searchText) || o.Artist.Contains(searchText)).ToList();
+				searchMusic = musicLibraryModelList.Where(o => o.SongName.ToLower().Contains(searchText.ToLower()) || o.Album.ToLower().Contains(searchText.ToLower()) || o.Artist.ToLower().Contains(searchText.ToLower())).ToList();
 			}
 			
 
@@ -52,6 +52,7 @@ namespace MusicManager.Areas.Music.Controllers
 			return View(searchMusic);
 		}
 
+		[HttpPost]
 		public ActionResult UpdateMusic(int id, string songName, string album, string artist, int genreId, string albumDate)
 		{
 			var musicService = new MusicService();
@@ -60,14 +61,16 @@ namespace MusicManager.Areas.Music.Controllers
 			musicLibrary.Album = album;
 			musicLibrary.Artist = artist;
 			musicLibrary.GenreId = genreId;
-			if(albumDate != string.Empty)
+			if(albumDate != null)
 			{
 				musicLibrary.DateOfAlbum = Convert.ToDateTime(albumDate);
 			}
 
 			musicService.UpdateMusicLibrary(musicLibrary);
 
-			return null;
+			var modelList = musicService.GetMusicLibraryList();
+
+			return Json("This");
 		}
 
 		public ActionResult ShowAlbumArt(int id)
@@ -110,9 +113,6 @@ namespace MusicManager.Areas.Music.Controllers
 			}
 
 			return null;
-
-			
-			
 		}
 
 		public ActionResult AddNew()
@@ -146,7 +146,22 @@ namespace MusicManager.Areas.Music.Controllers
 				musicLibraryModel.DateOfAlbum = Convert.ToDateTime(collection["DateOfAlbum"]);
 			}
 
-			if(albumArt != null)
+			int? songId = null;
+			if (song != null)
+			{
+				var songModel = new Song();
+
+				var getByteArray = ReadFully(song.InputStream);
+				var getContent = Convert.ToBase64String(getByteArray);
+
+				songModel.SongByte = getByteArray;
+
+				songId = musicService.AddSong(songModel);
+			}
+
+			musicLibraryModel.SongId = songId;
+
+			if (albumArt != null)
 			{
 				var getByteArray = ReadFully(albumArt.InputStream);
 				var getContent = Convert.ToBase64String(getByteArray);
@@ -155,16 +170,6 @@ namespace MusicManager.Areas.Music.Controllers
 			}
 
 			var id = musicService.AddMusicLibrary(musicLibraryModel);
-
-			if (song != null)
-			{
-				var songModel = new Song();
-				songModel.MusicLibraryId = id;
-				var getByteArray = ReadFully(song.InputStream);
-				var getContent = Convert.ToBase64String(getByteArray);
-
-				songModel.SongByte = getByteArray;
-			}
 
 			
 
@@ -191,16 +196,42 @@ namespace MusicManager.Areas.Music.Controllers
 		{
 			var musicService = new MusicService();
 
-			var musicLibrary = musicService.GetMusicLibrary(Id);
-
-			musicService.DeleteMusic(musicLibrary);
+			musicService.RemoveMusic(Id);
 
 			return RedirectToAction("Index", "Music");
+
 		}
 
+		public ActionResult DownloadSong(int id)
+		{
+			var musicService = new MusicService();
 
+			var musicLibrary = musicService.GetMusicLibrary(id);
 
+			return File(musicLibrary.Song.SongByte, "audio/mpeg", musicLibrary.SongName + ".mp3");
+		}
 
+		public ActionResult Manage()
+		{
+			return View();
+		}
 
+		[HttpPost]
+		public ActionResult Manage(FormCollection collection)
+		{
+			var musicService = new MusicService();
+
+			var genreModel = new Genre();
+			genreModel.Name = collection["NewGenre"];
+
+			musicService.AddNewGenre(genreModel);
+
+			return View();
+		}
+
+		public ActionResult About()
+		{
+			return View();
+		}
 	}
 }

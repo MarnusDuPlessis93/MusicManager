@@ -24,20 +24,22 @@ namespace MusicManager.Models
 		public DateTime? DateOfAlbum { get; set; }
 		[Column("GenreId")]
 		public int? GenreId { get; set; }
+		[Column("SongId")]
+		public int? SongId { get; set; }
 		[Column(TypeName = "image")]
 		public byte[] AlbumArt { get; set; }
 		[ForeignKey("GenreId")]
 		public virtual Genre Genre { get; set; }
+		[ForeignKey("SongId")]
+		public virtual Song Song { get; set; }
 
 	}
 
 	public class Song
 	{
 		public int Id { get; set; }
-		public int MusicLibraryId { get; set; }
 		[Column("SongByte", TypeName = "image")]
 		public byte[] SongByte { get; set; }
-		[ForeignKey("MusicLibraryId")]
-		public virtual MusicLibrary MusicLibraries { get; set; }
+		
 	}
 }
