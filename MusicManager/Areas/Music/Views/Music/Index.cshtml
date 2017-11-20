@@ -86,7 +86,6 @@
 			<th>Date</th>
 			<th>Genre</th>
 			<th>Actions</th>
-			@*<th>Play</th>*@
 		</tr>
 		@foreach (var item in Model)
 		{
@@ -95,28 +94,30 @@
 				<td>@item.SongName</td>
 				<td>@item.Album</td>
 				<td>@item.Artist</td>
-				<td>@item.DateOfAlbum</td>
+				@if (item.DateOfAlbum != null)
+				{
+					<td>@item.DateOfAlbum.ToString().Substring(0, 10)</td>
+				}
 				@if (item.Genre != null)
 				{
 					<td>@item.Genre.Name</td>
 				}
 				
-				<td onclick="editMode(@item.Id)"><a><input type="button" value="Edit" class="btn-info" /></a></td>
-				<td><a onclick="return confirmDelete()"  href="@Url.Action("Delete", "Music", new { Id = item.Id })"><input type="button" value="Delete" class="btn-info" /></a></td>
+				<td colspan="5" align="right" onclick="editMode(@item.Id)"><a><input type="button" value="Edit" class="btn-info" /></a> &nbsp;</td> 
+				<td colspan="4"><a onclick="return confirmDelete()"  href="@Url.Action("Delete", "Music", new { Id = item.Id })"><input type="button" value="Delete" class="btn-info" /></a></td>
 				@if (item.Song != null)
 				{
 					<td><a href="@Url.Action("DownloadSong", "Music", new { Id = item.Id})"><input type="button" value="Download Song" class="btn-success" /></a></td>
 				}
-
-				@*<td><input type="button" class="btn-primary" /></td>*@
 			</tr>
 			<tr class="cSaveMode_@item.Id" style="display:none">
+				<td style="display:block; width:5%"></td>
 				<td>@Html.TextBoxFor(o => item.SongName, new {Id = "SongName_" + item.Id, style = "width: 100%" })</td>
 				<td>@Html.TextBoxFor(o => item.Album, new { Id = "Album_" + item.Id, style = "width: 100%" })</td>
 				<td>@Html.TextBoxFor(o => item.Artist, new { Id = "Artist_" + item.Id, style = "width: 100%" })</td>
 				<td>@Html.TextBoxFor(o => item.DateOfAlbum, "{0:yyyy-MM-dd}", new { Id = "DateOfAlbum_" + item.Id, @type = "date" })</td>
 				<td>@Html.DropDownListFor(o => item.GenreId, new SelectList(genres, "Id", "Name",item.GenreId), "(Select genre)",new { Id = "GenreId_" + item.Id, })</td>
-				<td  id="idSave_@item.Id" onclick="saveMode(@item.Id)"><a><input type="submit" value="Save" class="btn-info" /></a></td>
+				<td align="right"  id="idSave_@item.Id" onclick="saveMode(@item.Id)"><a><input type="submit" value="Save" class="btn-info" /></a></td>
 			</tr>
 		}
 	</table>

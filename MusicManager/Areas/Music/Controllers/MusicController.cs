@@ -89,6 +89,10 @@ namespace MusicManager.Areas.Music.Controllers
 
 			ViewBag.Genres = musicService.GetGenreList();
 
+			ViewBag.ShowMessage = Session["ShowMessage"];
+
+			Session["ShowMessage"] = "";
+
 			return View(musicLibraryModel);
 		}
 
@@ -137,8 +141,7 @@ namespace MusicManager.Areas.Music.Controllers
 
 			var id = musicService.AddMusicLibrary(musicLibraryModel);
 
-			
-
+			Session["ShowMessage"] = collection["SongName"] + " successfully added!";
 			return RedirectToAction("AddNew");
 		}
 
