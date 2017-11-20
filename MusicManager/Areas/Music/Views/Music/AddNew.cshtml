@@ -24,11 +24,6 @@
 			return true;
 		}
 	}
-
-	function success()
-	{
-		alert(1);
-	}
 </script>
 
 @using (Html.BeginForm("AddNew", "Music", FormMethod.Post, new { enctype = "multipart/form-data", name = "frm", id = "frm", onsubmit = "javascript:return validate();" }))
