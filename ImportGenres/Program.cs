@@ -16,14 +16,17 @@ namespace ImportGenres
 		{
 			var text = System.IO.File.ReadAllLines(@"C:\Users\user\Desktop\Genre.txt");
 
+
+			string connetionString = null;
+			string sql = null;
+			connetionString = ConfigurationManager.AppSettings["connectionString"];
+
 			foreach (var genreName in text)
 			{
 				try
 				{
 
-					string connetionString = null;
-					string sql = null;
-					connetionString = ConfigurationManager.AppSettings["connectionString"];
+					
 					using (SqlConnection cnn = new SqlConnection(connetionString))
 					{
 						sql = "insert into Genres ([Name]) values(@genreName)";
