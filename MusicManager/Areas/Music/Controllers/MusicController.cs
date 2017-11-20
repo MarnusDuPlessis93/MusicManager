@@ -78,41 +78,7 @@ namespace MusicManager.Areas.Music.Controllers
 			var musicService = new MusicService();
 			var musicLibrary = musicService.GetMusicLibrary(id);
 
-			var destRect = new Rectangle(0, 0, 50, 50);
-			var destImage = new Bitmap(50,50);
-
-			if (musicLibrary.AlbumArt != null)
-			{
-				using (var ms = new MemoryStream(musicLibrary.AlbumArt))
-				{
-
-					var albumArt = Image.FromStream(ms);
-					destImage.SetResolution(albumArt.HorizontalResolution, albumArt.VerticalResolution);
-					using (var graphics = Graphics.FromImage(albumArt))
-					{
-						graphics.CompositingMode = CompositingMode.SourceCopy;
-						graphics.CompositingQuality = CompositingQuality.HighQuality;
-						graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-						graphics.SmoothingMode = SmoothingMode.HighQuality;
-						graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-						using (var wrapMode = new ImageAttributes())
-						{
-							wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-							graphics.DrawImage(albumArt, destRect, 0, 0, albumArt.Width, albumArt.Height, GraphicsUnit.Pixel, wrapMode);
-
-							var converter = new ImageConverter();
-
-							var returnImageByteArray = (byte[])converter.ConvertTo(destImage, typeof(byte[]));
-
-							return File(returnImageByteArray, "image/jpg");
-						}
-					}
-
-				}
-			}
-
-			return null;
+			return File(musicLibrary.AlbumArt, "image/jpeg");
 		}
 
 		public ActionResult AddNew()
@@ -166,7 +132,7 @@ namespace MusicManager.Areas.Music.Controllers
 				var getByteArray = ReadFully(albumArt.InputStream);
 				var getContent = Convert.ToBase64String(getByteArray);
 
-				musicLibraryModel.AlbumArt = getByteArray;
+				musicLibraryModel.AlbumArt = ResizeImage(getByteArray);
 			}
 
 			var id = musicService.AddMusicLibrary(musicLibraryModel);
@@ -174,6 +140,17 @@ namespace MusicManager.Areas.Music.Controllers
 			
 
 			return RedirectToAction("AddNew");
+		}
+
+		public byte[] ResizeImage(byte[] byteArray)
+		{
+			System.IO.MemoryStream myMemStream = new System.IO.MemoryStream(byteArray);
+			System.Drawing.Image fullsizeImage = System.Drawing.Image.FromStream(myMemStream);
+			System.Drawing.Image newImage = fullsizeImage.GetThumbnailImage(40, 40, null, IntPtr.Zero);
+			System.IO.MemoryStream myResult = new System.IO.MemoryStream();
+			newImage.Save(myResult, System.Drawing.Imaging.ImageFormat.Gif);
+
+			return myResult.ToArray();
 		}
 
 		public static byte[] ReadFully(Stream input)

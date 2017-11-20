@@ -79,7 +79,7 @@
 			</td>
 		</tr>
 		<tr>
-			@*<th style="width:20%; height">Art</th>*@
+			<th>Art</th>
 			<th>Song</th>
 			<th>Album</th>
 			<th>Artist</th>
@@ -91,12 +91,16 @@
 		@foreach (var item in Model)
 		{
 			<tr class="cEditMode_@item.Id">
-				@*<td><img src="@Url.Action("ShowAlbumArt", "Music", new { id = item.Id })" /></td>*@
+				<td><img src="@Url.Action("ShowAlbumArt", "Music", new { id = item.Id })" /></td>
 				<td>@item.SongName</td>
 				<td>@item.Album</td>
 				<td>@item.Artist</td>
 				<td>@item.DateOfAlbum</td>
-				<td>@item.Genre.Name</td>
+				@if (item.Genre != null)
+				{
+					<td>@item.Genre.Name</td>
+				}
+				
 				<td onclick="editMode(@item.Id)"><a><input type="button" value="Edit" class="btn-info" /></a></td>
 				<td><a onclick="return confirmDelete()"  href="@Url.Action("Delete", "Music", new { Id = item.Id })"><input type="button" value="Delete" class="btn-info" /></a></td>
 				@if (item.Song != null)

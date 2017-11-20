@@ -52,10 +52,10 @@
 		<th>Date of Album</th>
 		<td>@Html.EditorFor(o => o.DateOfAlbum)</td>
 	</tr>
-	@*<tr>
+	<tr>
 		<th>Album Art</th>
 		<td><input type="file" id="albumArt" name="albumArt" /></td>
-	</tr>*@
+	</tr>
 	<tr>
 		<th>Genre</th>
 		<td>@Html.DropDownListFor(o => o.GenreId, new SelectList(genres, "Id", "Name"), "(Select genre)")</td>

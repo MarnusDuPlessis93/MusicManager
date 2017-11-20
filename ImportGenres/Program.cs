@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MusicManager.Models;
 using MusicManager.Services;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace ImportGenres
 {
@@ -22,7 +23,7 @@ namespace ImportGenres
 
 					string connetionString = null;
 					string sql = null;
-					connetionString = "Data Source=.\\sql2008r2;Initial Catalog=MusicManager;Integrated Security=True;User ID=sa;Password=marnus;";
+					connetionString = ConfigurationManager.AppSettings["connectionString"];
 					using (SqlConnection cnn = new SqlConnection(connetionString))
 					{
 						sql = "insert into Genres ([Name]) values(@genreName)";
