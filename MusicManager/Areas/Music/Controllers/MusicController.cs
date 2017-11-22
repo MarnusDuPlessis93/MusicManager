@@ -9,6 +9,8 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Media;
+using System.Diagnostics;
 
 namespace MusicManager.Areas.Music.Controllers
 {
@@ -70,7 +72,7 @@ namespace MusicManager.Areas.Music.Controllers
 
 			var modelList = musicService.GetMusicLibraryList();
 
-			return Json("This");
+			return Json("");
 		}
 
 		public ActionResult ShowAlbumArt(int id)
@@ -212,6 +214,40 @@ namespace MusicManager.Areas.Music.Controllers
 		public ActionResult About()
 		{
 			return View();
+		}
+
+		[HttpPost]
+		public ActionResult DeleteSelected(string ids)
+		{
+			var musicService = new MusicService();
+
+			var idArray = ids.Split('|');
+
+			for(var i = 0; i < idArray.Count(); i++)
+			{
+				if(idArray[i] != "")
+				{
+					musicService.RemoveMusic(Convert.ToInt32(idArray[i]));
+				}
+			}
+
+			return Json("");
+
+		}
+
+		public ActionResult PlaySong(int id)
+		{
+			var musicService = new MusicService();
+
+			var musicLibrary = musicService.GetMusicLibrary(id);
+
+			var bytes = musicLibrary.Song.SongByte;
+			string name = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
+			string path = Path.Combine(Path.GetTempPath(), name);
+			System.IO.File.WriteAllBytes(path, bytes);
+			Process.Start(path);
+
+			return null;
 		}
 	}
 }

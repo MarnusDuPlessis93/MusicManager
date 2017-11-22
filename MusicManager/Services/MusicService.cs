@@ -69,7 +69,12 @@ namespace MusicManager.Services
 		{
 			using (var context = new BaseContext())
 			{
-				var musicLibrary = context.MusicLibraries.First(o => o.Id == Id);
+				var musicLibrary = context.MusicLibraries.Include("Song").First(o => o.Id == Id);
+				if(musicLibrary.Song != null)
+				{
+					var song = context.Songs.Single(o => o.Id == musicLibrary.SongId);
+					context.Songs.Remove(song);
+				}
 				context.MusicLibraries.Remove(musicLibrary);
 				context.SaveChanges();
 			}
@@ -102,6 +107,5 @@ namespace MusicManager.Services
 				context.SaveChanges();
 			}
 		}
-
 	}
 }
